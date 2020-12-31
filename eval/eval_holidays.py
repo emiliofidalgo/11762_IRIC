@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+import pyplot as plt
 
 def get_groundtruth(gt_file):
     """
@@ -166,6 +167,97 @@ def compute_mAP(results, gt_file):
         return -1
     
     return sum_ap / nqueries
+
+class ResultViz(object):
+    '''
+    Class to visualize graphically the results of a retrieval procedure
+    '''
+    
+    def __init__(self, q_names, q_imgs, t_names, t_imgs):
+        '''
+        Constructor. It receives lists with query and train names and images.
+        '''
+        self.q_names = q_names
+        self.q_imgs = q_imgs
+        self.t_names = t_names
+        self.t_imgs = t_imgs
+        
+
+    def show_results(self, results, nqueries = 3, ntrains = 2):
+        '''
+        Show the results of an image retrieval process.
+
+        - results: A dictionary containing, for each query image, an ordered list of the retrieved images. See compute_mAP for an example.
+        - nqueries: Number of query images to show from the results.
+        - ntrains: Number of retrieved images to show for each query.
+        '''
+        fig, axs = plt.subplots(nrows=nqueries, ncols=ntrains + 1, figsize=(20, 20),
+                                squeeze=False, subplot_kw={'xticks': [], 'yticks': []})
+  
+        # Hiding all axes by default
+        for ax in axs.flatten():
+            ax.set_visible(False)
+  
+        id_query = 0
+        for query_name, query_results in results.items():
+
+            if id_query == nqueries:
+                break
+        
+            # Showing query image
+            qimg = self.q_imgs[self.q_names.index(query_name)]
+            axs[id_query, 0].imshow(qimg, aspect=0.5)
+            axs[id_query, 0].set_title(query_name)
+            axs[id_query, 0].axis('scaled')
+            axs[id_query, 0].set_visible(True)
+                        
+            # Showing ntrains best results
+            for img_id, t_name in enumerate(query_results[:ntrains]):
+                timg = self.t_imgs[self.t_names.index(t_name)]
+                axs[id_query, img_id + 1].imshow(timg, aspect=0.5)
+                axs[id_query, img_id + 1].set_title(t_name)
+                axs[id_query, img_id + 1].axis('scaled')
+                axs[id_query, img_id + 1].set_visible(True)
+    
+            id_query += 1
+
+        fig.tight_layout()
+        fig.show()
+
+    def show_one_result(self, results, query_name, ntrains = 2):
+        '''
+        Show the results of an image retrieval process for just one query.
+  
+        - results: A dictionary containing, for each query image, an ordered list of the retrieved images. See compute_mAP for an example.
+        - query_name: Name of the query image to be shown.
+        - ntrains: Number of retrieved images to show.
+        '''
+        
+        fig, axs = plt.subplots(nrows=1, ncols=ntrains + 1, figsize=(20, 20),
+                          squeeze=False, subplot_kw={'xticks': [], 'yticks': []})
+                          
+        # Hiding all axes by default
+        for ax in axs.flatten():
+            ax.set_visible(False)
+  
+        # Showing query image
+        qimg = self.q_imgs[self.q_names.index(query_name)]
+        axs[0, 0].imshow(qimg, aspect=0.5)    
+        axs[0, 0].set_title(query_name)
+        axs[0, 0].axis('scaled')
+        axs[0, 0].set_visible(True)
+
+        # Showing ntrains best results
+        for img_id, t_name in enumerate(results[query_name][:ntrains]):
+            timg = self.t_imgs[self.t_names.index(t_name)]
+            axs[0, img_id + 1].imshow(timg, aspect=0.5)
+            axs[0, img_id + 1].set_title(t_name)
+            axs[0, img_id + 1].axis('scaled')    
+            axs[0, img_id + 1].set_visible(True)
+  
+        
+        fig.tight_layout()
+        fig.show()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
