@@ -6,8 +6,8 @@ import sys
 
 def get_groundtruth(gt_file):
     """
-    Read ground truth file and output a dictionary
-    mapping queries to the set of positive results (plus a list of all images).
+    Read a ground truth file and outputs a dictionary
+    mapping queries to the set of relevant results (plus a list of all images).
     """
     gt = {}
     allnames = set()
@@ -78,8 +78,7 @@ def compute_mAP_from_file(results_file, gt_file):
     nqueries = 0
 
     # Processing each query
-    # for query_name,results in parse_results(results_file):
-    for query_name,query_results in results.items():        
+    for query_name,query_results in results.items():
 
         # Checking if the current query is in the dataset
         if query_name not in gt:
