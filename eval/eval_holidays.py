@@ -3,7 +3,7 @@
 import argparse
 import os
 import sys
-import pyplot as plt
+from matplotlib import pyplot as plt
 
 def get_groundtruth(gt_file):
     """
@@ -253,8 +253,7 @@ class ResultViz(object):
             axs[0, img_id + 1].imshow(timg, aspect=0.5)
             axs[0, img_id + 1].set_title(t_name)
             axs[0, img_id + 1].axis('scaled')    
-            axs[0, img_id + 1].set_visible(True)
-  
+            axs[0, img_id + 1].set_visible(True)  
         
         fig.tight_layout()
         fig.show()
